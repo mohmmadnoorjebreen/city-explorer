@@ -91,7 +91,7 @@ close = () =>{
           </div>
         }
         {
-          this.state.error &&
+          
           <div>
             <Modal show={ this.state.error} >
               <Modal.Header closeButton>
