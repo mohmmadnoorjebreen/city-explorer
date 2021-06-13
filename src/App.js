@@ -15,6 +15,8 @@ import Image from 'react-bootstrap/Image'
 import Modal from 'react-bootstrap/Modal'
 
 
+
+
 export class App extends React.Component {
 
   constructor(props) {
@@ -33,7 +35,11 @@ export class App extends React.Component {
     });
   }
 
-
+close = () =>{
+  this.setState ({
+    error: false,
+  })
+}
 
 
 
@@ -44,7 +50,7 @@ export class App extends React.Component {
         error: true,
         
       });
-      alert('error');
+      
     });;
 
     this.setState({
@@ -92,6 +98,7 @@ export class App extends React.Component {
                 <Modal.Title>Error</Modal.Title>
               </Modal.Header>
               <Modal.Body>here an error in data API</Modal.Body>
+              <Button onClick = {this.close}>CLOSE</Button>
             </Modal>
           </div>
         }
