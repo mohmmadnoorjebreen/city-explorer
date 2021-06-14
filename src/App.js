@@ -1,20 +1,18 @@
 import React from 'react'
 
-import Form from 'react-bootstrap/Form'
-
-import Button from 'react-bootstrap/Button'
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import axios from 'axios';
 
-import Card from 'react-bootstrap/Card'
+import FormCity from './component/FormCity'
 
-import Image from 'react-bootstrap/Image'
+import CardsData from './component/CardsData'
 
-import Modal from 'react-bootstrap/Modal'
+import ImgMap from './component/ImgMap'
 
+import ModelForError from './component/ModelForError'
 
+import Weather from './component/Weather'
 
 
 export class App extends React.Component {
@@ -25,7 +23,9 @@ export class App extends React.Component {
       cityName: '',
       cityData: {},
       Data: false,
-      error: false
+      error: false,
+      massageError : '',
+      DataOfWeather: '',
     }
   }
 
@@ -35,71 +35,69 @@ export class App extends React.Component {
     });
   }
 
-close = () =>{
-  this.setState ({
-    error: false,
-  })
-}
+  close = () => {
+    this.setState({
+      error: false,
+    })
+  }
 
 
 
   submitForm = async (e) => {
     e.preventDefault();
-    const axio = await axios.get(`https://us1.locationiq.com/v1/search.php?key=pk.d36871f015649f915282f374cff76628&city=${this.state.cityName}&format=json`).catch(() => {
-      this.setState ({
-        error: true,
-        
-      });
-      
-    });;
+  try {
+    const axio = await axios.get(`https://us1.locationiq.com/v1/search.php?key=pk.d36871f015649f915282f374cff76628&city=${this.state.cityName}&format=json`)
+ 
+    const ApiWeather = await axios.get(`${process.env.REACT_APP_URL}/weather-data`);
+ 
 
     this.setState({
       cityData: axio.data[0],
-      Data: true
+      Data: true,
+      DataOfWeather: ApiWeather.data.data,
     })
   }
+
+  catch(error) {
+
+    this.setState({
+      error: true,
+      massageError : error.message
+    });
+
+  }
+}
+
+
 
   render() {
     return (
       <div  >
-        <Form onSubmit={this.submitForm} style={{ width: 960, margin: 'auto', textAlign: "center", backgroundColor: "blue" }}>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label style={{ color: "white", fontSize: '6mm' }}>city name  </Form.Label>
-            <Form.Control type="text" placeholder="Enter city name " onChange={this.inputCity} style={{ width: 500, margin: 'auto' }} />
-          </Form.Group>
-          <Button variant="primary" type="submit" >
-            Explore!
-          </Button>
 
-        </Form>
+        <FormCity
+        submit = {this.submitForm} 
+        impute = {this.inputCity} />
+
         {this.state.Data &&
           <div style={{ width: 960, margin: 'auto', textAlign: "center", backgroundColor: "blue" }}>
-            <Card >
-              <Card.Header as="h5" style={{ color: "red" }}> the city</Card.Header>
-              <Card.Body>
-                <Card.Title style={{ color: "blue" }}>City name : {this.state.cityData.display_name}</Card.Title>
-                <Card.Text style={{ color: "green" }}>
-                  latitude  = {this.state.cityData.lat}  </Card.Text>
-                <Card.Text style={{ color: "green" }}>
-                  longitude = {this.state.cityData.lon}  </Card.Text>
-              </Card.Body>
-            </Card>
+            <CardsData 
+           cityNames= {this.state.cityData.display_name}
+           latitude  = {this.state.cityData.lat} 
+           longitude = {this.state.cityData.lon} />
 
-
-            <Image src={`https://maps.locationiq.com/v3/staticmap?key=pk.d36871f015649f915282f374cff76628&q&center=${this.state.cityData.lat},${this.state.cityData.lon}&zoom=15`} roundedCircle style={{ margin: 'auto' }} />
-
+            <ImgMap 
+            lat = {this.state.cityData.lat}
+            lon = {this.state.cityData.lon}/>
+            < Weather DataOfWeather = {this.state.DataOfWeather} />
           </div>
         }
         {
-          
+
           <div>
-            <Modal show={ this.state.error} >
-              <Modal.Header closeButton>
-                <Modal.Title>Error</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>here an error in data API</Modal.Body>
-              <Button onClick = {this.close}>CLOSE</Button>
-            </Modal>
+            <ModelForError
+           showError= {this.state.error} 
+           close = {this.close}
+           massageError = { this.state.massageError} />
           </div>
         }
 
@@ -110,14 +108,4 @@ close = () =>{
 
 export default App
 
-export function getAllPeople() {
-  return axios
-    .get("/api/getAllPeople")
-    .then(response => {
-      return response.data;
-    })
-    .catch(error => {
-      return error;
-    });
-}
 
