@@ -26,6 +26,8 @@ export class App extends React.Component {
       error: false,
       massageError : '',
       DataOfWeather: '',
+      lat :'',
+      lon :'',
     }
   }
 
@@ -43,29 +45,43 @@ export class App extends React.Component {
 
 
 
-  submitForm = async (e) => {
+  submitForm =  (e) => {
     e.preventDefault();
-  try {
-    const axio = await axios.get(`https://us1.locationiq.com/v1/search.php?key=pk.d36871f015649f915282f374cff76628&city=${this.state.cityName}&format=json`)
- 
-    const ApiWeather = await axios.get(`${process.env.REACT_APP_URL}/weather`);
- 
-console.log(ApiWeather);
-    this.setState({
-      cityData: axio.data[0],
-      Data: true,
-      DataOfWeather: ApiWeather.data,
+
+    
+
+     axios.get(`https://us1.locationiq.com/v1/search.php?key=pk.d36871f015649f915282f374cff76628&city=${this.state.cityName}&format=json`).then((axio) =>{
+     
+      this.setState({
+        cityData: axio.data[0],
+        lat :axio.data[0].lat,
+        lon :axio.data[0].lon,
+        
+      })
+  
+      axios.get(`${process.env.REACT_APP_URL}/weather?lat=${this.state.lat}&lon=${this.state.lon}`).then((ApiWeather)=>{
+     
+        this.setState({
+          DataOfWeather: ApiWeather.data,
+          Data: true,
+        })
+        
+      })
+    }).catch(error=> {
+
+      this.setState({
+        
+        massageError : error.message,
+        error: true,
+      });
     })
-  }
 
-  catch(error) {
 
-    this.setState({
-      error: true,
-      massageError : error.message
-    });
+ 
+  
 
-  }
+
+
 }
 
 
@@ -86,8 +102,8 @@ console.log(ApiWeather);
            longitude = {this.state.cityData.lon} />
 
             <ImgMap 
-            lat = {this.state.cityData.lat}
-            lon = {this.state.cityData.lon}/>
+            lat = {this.state.lat}
+            lon = {this.state.lon}/>
             < Weather DataOfWeather = {this.state.DataOfWeather} />
           </div>
         }
