@@ -7,9 +7,15 @@ export class Weather extends React.Component {
                  {
               this.props.DataOfWeather.map(value => {
                 return (
+                  <>
                   <p>
-                    {value.weather.description}
+                  description: {value.description}
                   </p>
+                  <p>
+                  date: {value.date}
+                  </p>
+                  </>
+                  
                 )
               })
             }
