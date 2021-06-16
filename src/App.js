@@ -14,6 +14,7 @@ import ModelForError from './component/ModelForError'
 
 import Weather from './component/Weather'
 
+import Move from './component/Move'
 
 export class App extends React.Component {
 
@@ -28,6 +29,7 @@ export class App extends React.Component {
       DataOfWeather: '',
       lat :'',
       lon :'',
+      DataOfMove :'',
     }
   }
 
@@ -66,7 +68,18 @@ export class App extends React.Component {
           Data: true,
         })
         
-      })
+      }).then((w)=>{ 
+
+           axios.get(`${process.env.REACT_APP_URL}/move?city=${this.state.cityName}`).then((moves)=>{
+           this.setState({
+             DataOfMove: moves.data[0],
+             Data: true,
+           })
+           console.log(this.state.DataOfMove);
+         })})
+
+  
+
     }).catch(error=> {
 
       this.setState({
@@ -105,6 +118,7 @@ export class App extends React.Component {
             lat = {this.state.lat}
             lon = {this.state.lon}/>
             < Weather DataOfWeather = {this.state.DataOfWeather} />
+            <Move DataOfMove={this.state.DataOfMove}    />
           </div>
         }
         {
