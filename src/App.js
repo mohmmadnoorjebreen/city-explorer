@@ -29,7 +29,7 @@ export class App extends React.Component {
       DataOfWeather: '',
       lat :'',
       lon :'',
-      DataOfMove :'',
+      DataOfMove :[],
     }
   }
 
@@ -72,10 +72,10 @@ export class App extends React.Component {
 
            axios.get(`${process.env.REACT_APP_URL}/move?city=${this.state.cityName}`).then((moves)=>{
            this.setState({
-             DataOfMove: moves.data[0],
+             DataOfMove: moves.data,
              Data: true,
            })
-           console.log(this.state.DataOfMove);
+           console.log('DataOfMove',this.state.DataOfMove);
          })})
 
   
@@ -118,7 +118,14 @@ export class App extends React.Component {
             lat = {this.state.lat}
             lon = {this.state.lon}/>
             < Weather DataOfWeather = {this.state.DataOfWeather} />
-            <Move DataOfMove={this.state.DataOfMove}    />
+             {
+                    this.state.DataOfMove.map(value =>
+                        <Move
+                        DataOfMove ={value}
+                        />
+                    )
+                }
+           
           </div>
         }
         {
