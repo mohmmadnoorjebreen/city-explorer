@@ -72,7 +72,7 @@ export class App extends React.Component {
 
            axios.get(`${process.env.REACT_APP_URL}/move?city=${this.state.cityName}`).then((moves)=>{
            this.setState({
-             DataOfMove: moves.data[0],
+             DataOfMove: moves.data,
              Data: true,
            })
            console.log(this.state.DataOfMove);
